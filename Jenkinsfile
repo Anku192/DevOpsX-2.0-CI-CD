@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_NAME = "ankurpb/devopsx2-app:1.0"
+    }
+
     stages {
 
         stage('Checkout') {
@@ -23,11 +27,11 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t devopsx2-app:1.0 .'
+                bat 'docker build -t %IMAGE_NAME% .'
             }
         }
 
-        stage('Docker Login and Push') {
+        stage('Docker Login') {
             steps {
                 withCredentials([
                     usernamePassword(
@@ -37,11 +41,16 @@ pipeline {
                     )
                 ]) {
                     bat '''
-                        echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
-                        docker tag devopsx2-app:1.0 %DOCKER_USERNAME%/devopsx2-app:1.0
-                        docker push %DOCKER_USERNAME%/devopsx2-app:1.0
+                    docker logout
+                    echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
                     '''
                 }
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                bat 'docker push %IMAGE_NAME%'
             }
         }
     }

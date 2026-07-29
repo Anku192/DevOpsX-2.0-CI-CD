@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devopsx2-app
+  labels:
+    app: devopsx2-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devopsx2-app
+  template:
+    metadata:
+      labels:
+        app: devopsx2-app
+    spec:
+      containers:
+        - name: devopsx2-container
+          image: ankurpb/devopsx2-app:1.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
