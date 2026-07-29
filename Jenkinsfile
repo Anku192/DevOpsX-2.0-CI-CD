@@ -41,8 +41,12 @@ pipeline {
                     )
                 ]) {
                     bat '''
-                    docker logout
-                    echo %DOCKER_PASSWORD% | docker login -u %DOCKER_USERNAME% --password-stdin
+                    if "%DOCKER_PASSWORD%"=="" (
+                        echo PASSWORD IS EMPTY
+                        exit /b 1
+                    ) else (
+                        echo PASSWORD RECEIVED
+                    )
                     '''
                 }
             }
